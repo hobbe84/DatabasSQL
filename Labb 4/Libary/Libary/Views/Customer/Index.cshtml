@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Libary.Models.CustomerSummary>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Libary Customers</h2>
+
+<p>    
+    @Html.ActionLink("New Customer", "Create") - Not yet implemented!    
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.EntitledForLoan)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CustomerName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EmailAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LitteratureLoans)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LoansOverDue)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.EntitledForLoan)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CustomerName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PhoneNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EmailAddress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LitteratureLoans)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LoansOverDue)
+        </td>
+        <td>
+            @Html.ActionLink("Details", "Customer", new { id=item.CustomerID }, new { @class = "btn btn-warning btn-sm glyphicon glyphicon-pencil" })
+            @Html.ActionLink("Delete", "DeleteCustomer", new { id = item.CustomerID }, new { @class = "btn btn-danger btn-sm glyphicon glyphicon-remove" })
+        </td>
+    </tr>
+}
+
+</table>

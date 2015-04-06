@@ -1,0 +1,582 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="LibaryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Authors">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="BirthDate" Type="datetime" />
+          <Property Name="Deceased" Type="datetime" />
+          <Property Name="Nationality" Type="varchar" MaxLength="50" />
+          <Property Name="Language" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Customers">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ActiveCustomer" Type="bit" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Address" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PhoneNumber" Type="varchar" MaxLength="50" />
+          <Property Name="EmailAddress" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Gender" Type="varchar" MaxLength="15" />
+          <Property Name="BirthDate" Type="datetime" />
+          <Property Name="EntitledForLoan" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Litterature">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AuthorID" Type="int" Nullable="false" />
+          <Property Name="ISBN" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Genre" Type="varchar" MaxLength="50" />
+          <Property Name="Language" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="LitteratureCopy">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StatusID" Type="int" Nullable="false" />
+          <Property Name="LitteratureID" Type="int" Nullable="false" />
+          <Property Name="PurchasePrice" Type="smallmoney" />
+          <Property Name="PurchaseYear" Type="datetime" />
+        </EntityType>
+        <EntityType Name="LitteratureCopyStatus">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LitteratureLoan">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerID" Type="int" Nullable="false" />
+          <Property Name="LitteratureCopyID" Type="int" Nullable="false" />
+          <Property Name="BorrowDate" Type="datetime" Nullable="false" />
+          <Property Name="Returndate" Type="datetime" Nullable="false" />
+          <Property Name="LoanReturned" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Libary.dbo.vCustomersWithBooks' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vCustomersWithBooks">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="CustomerName" />
+            <PropertyRef Name="Title" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="CustomerName" Type="varchar" MaxLength="101" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReturnDate" Type="date" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Libary.dbo.vNumberOfCopiesAvailable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vNumberOfCopiesAvailable">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="BookTitle" />
+            <PropertyRef Name="ISBN" />
+            <PropertyRef Name="CopyID" />
+            <PropertyRef Name="Availability" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="BookTitle" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ISBN" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="CopyID" Type="int" Nullable="false" />
+          <Property Name="Availability" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_LitteratureLoan_Custumors_ID">
+          <End Role="Customers" Type="Self.Customers" Multiplicity="1" />
+          <End Role="LitteratureLoan" Type="Self.LitteratureLoan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LitteratureLoan">
+              <PropertyRef Name="CustomerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LitteratureLoan_LitteratureCopy_ID">
+          <End Role="LitteratureCopy" Type="Self.LitteratureCopy" Multiplicity="1" />
+          <End Role="LitteratureLoan" Type="Self.LitteratureLoan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LitteratureCopy">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LitteratureLoan">
+              <PropertyRef Name="LitteratureCopyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Littrature_Authors_ID">
+          <End Role="Authors" Type="Self.Authors" Multiplicity="1" />
+          <End Role="Litterature" Type="Self.Litterature" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Authors">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Litterature">
+              <PropertyRef Name="AuthorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LittratureCopy_Litterature_ID">
+          <End Role="Litterature" Type="Self.Litterature" Multiplicity="1" />
+          <End Role="LitteratureCopy" Type="Self.LitteratureCopy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Litterature">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LitteratureCopy">
+              <PropertyRef Name="LitteratureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LittratureCopy_LitteratureCopyStatus_ID">
+          <End Role="LitteratureCopyStatus" Type="Self.LitteratureCopyStatus" Multiplicity="1" />
+          <End Role="LitteratureCopy" Type="Self.LitteratureCopy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LitteratureCopyStatus">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LitteratureCopy">
+              <PropertyRef Name="StatusID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="uspBorrowBook" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+          <Parameter Name="BookID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspReturnBook" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="BookID" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="LibaryModelStoreContainer">
+          <EntitySet Name="Authors" EntityType="Self.Authors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Litterature" EntityType="Self.Litterature" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LitteratureCopy" EntityType="Self.LitteratureCopy" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LitteratureCopyStatus" EntityType="Self.LitteratureCopyStatus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LitteratureLoan" EntityType="Self.LitteratureLoan" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vCustomersWithBooks" EntityType="Self.vCustomersWithBooks" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vCustomersWithBooks].[ID] AS [ID], 
+    [vCustomersWithBooks].[CustomerName] AS [CustomerName], 
+    [vCustomersWithBooks].[Title] AS [Title], 
+    [vCustomersWithBooks].[ReturnDate] AS [ReturnDate]
+    FROM [dbo].[vCustomersWithBooks] AS [vCustomersWithBooks]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vNumberOfCopiesAvailable" EntityType="Self.vNumberOfCopiesAvailable" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vNumberOfCopiesAvailable].[ID] AS [ID], 
+    [vNumberOfCopiesAvailable].[BookTitle] AS [BookTitle], 
+    [vNumberOfCopiesAvailable].[ISBN] AS [ISBN], 
+    [vNumberOfCopiesAvailable].[CopyID] AS [CopyID], 
+    [vNumberOfCopiesAvailable].[Availability] AS [Availability]
+    FROM [dbo].[vNumberOfCopiesAvailable] AS [vNumberOfCopiesAvailable]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_LitteratureLoan_Custumors_ID" Association="Self.FK_LitteratureLoan_Custumors_ID">
+            <End Role="Customers" EntitySet="Customers" />
+            <End Role="LitteratureLoan" EntitySet="LitteratureLoan" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LitteratureLoan_LitteratureCopy_ID" Association="Self.FK_LitteratureLoan_LitteratureCopy_ID">
+            <End Role="LitteratureCopy" EntitySet="LitteratureCopy" />
+            <End Role="LitteratureLoan" EntitySet="LitteratureLoan" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Littrature_Authors_ID" Association="Self.FK_Littrature_Authors_ID">
+            <End Role="Authors" EntitySet="Authors" />
+            <End Role="Litterature" EntitySet="Litterature" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LittratureCopy_Litterature_ID" Association="Self.FK_LittratureCopy_Litterature_ID">
+            <End Role="Litterature" EntitySet="Litterature" />
+            <End Role="LitteratureCopy" EntitySet="LitteratureCopy" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LittratureCopy_LitteratureCopyStatus_ID" Association="Self.FK_LittratureCopy_LitteratureCopyStatus_ID">
+            <End Role="LitteratureCopyStatus" EntitySet="LitteratureCopyStatus" />
+            <End Role="LitteratureCopy" EntitySet="LitteratureCopy" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="LibaryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Author">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BirthDate" Type="DateTime" Precision="3" />
+          <Property Name="Deceased" Type="DateTime" Precision="3" />
+          <Property Name="Nationality" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Language" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Litteratures" Relationship="Self.FK_Littrature_Authors_ID" FromRole="Authors" ToRole="Litterature" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmailAddress" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Gender" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="BirthDate" Type="DateTime" Precision="3" />
+          <Property Name="EntitledForLoan" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="LitteratureLoans" Relationship="Self.FK_LitteratureLoan_Custumors_ID" FromRole="Customers" ToRole="LitteratureLoan" />
+          <Property Name="ActiveCustomer" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Litterature">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AuthorID" Type="Int32" Nullable="false" />
+          <Property Name="ISBN" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Genre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Language" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Author" Relationship="Self.FK_Littrature_Authors_ID" FromRole="Litterature" ToRole="Authors" />
+          <NavigationProperty Name="LitteratureCopies" Relationship="Self.FK_LittratureCopy_Litterature_ID" FromRole="Litterature" ToRole="LitteratureCopy" />
+        </EntityType>
+        <EntityType Name="LitteratureCopy">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StatusID" Type="Int32" Nullable="false" />
+          <Property Name="LitteratureID" Type="Int32" Nullable="false" />
+          <Property Name="PurchasePrice" Type="Decimal" Precision="10" Scale="4" />
+          <Property Name="PurchaseYear" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Litterature" Relationship="Self.FK_LittratureCopy_Litterature_ID" FromRole="LitteratureCopy" ToRole="Litterature" />
+          <NavigationProperty Name="LitteratureLoans" Relationship="Self.FK_LitteratureLoan_LitteratureCopy_ID" FromRole="LitteratureCopy" ToRole="LitteratureLoan" />
+          <NavigationProperty Name="LitteratureCopyStatu" Relationship="Self.FK_LittratureCopy_LitteratureCopyStatus_ID" FromRole="LitteratureCopy" ToRole="LitteratureCopyStatus" />
+        </EntityType>
+        <EntityType Name="LitteratureCopyStatu">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="LitteratureCopies" Relationship="Self.FK_LittratureCopy_LitteratureCopyStatus_ID" FromRole="LitteratureCopyStatus" ToRole="LitteratureCopy" />
+        </EntityType>
+        <EntityType Name="LitteratureLoan">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="LitteratureCopyID" Type="Int32" Nullable="false" />
+          <Property Name="BorrowDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Returndate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Customer" Relationship="Self.FK_LitteratureLoan_Custumors_ID" FromRole="LitteratureLoan" ToRole="Customers" />
+          <NavigationProperty Name="LitteratureCopy" Relationship="Self.FK_LitteratureLoan_LitteratureCopy_ID" FromRole="LitteratureLoan" ToRole="LitteratureCopy" />
+          <Property Name="LoanReturned" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vCustomersWithBook">
+          <Key>
+            <PropertyRef Name="CustomerName" />
+            <PropertyRef Name="Title" />
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="CustomerName" Type="String" MaxLength="101" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ReturnDate" Type="DateTime" Precision="0" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vNumberOfCopiesAvailable">
+          <Key>
+            <PropertyRef Name="BookTitle" />
+            <PropertyRef Name="ISBN" />
+            <PropertyRef Name="CopyID" />
+            <PropertyRef Name="Availability" />
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="BookTitle" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ISBN" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CopyID" Type="Int32" Nullable="false" />
+          <Property Name="Availability" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Littrature_Authors_ID">
+          <End Role="Authors" Type="Self.Author" Multiplicity="1" />
+          <End Role="Litterature" Type="Self.Litterature" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Authors">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Litterature">
+              <PropertyRef Name="AuthorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LitteratureLoan_Custumors_ID">
+          <End Role="Customers" Type="Self.Customer" Multiplicity="1" />
+          <End Role="LitteratureLoan" Type="Self.LitteratureLoan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customers">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LitteratureLoan">
+              <PropertyRef Name="CustomerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LittratureCopy_Litterature_ID">
+          <End Role="Litterature" Type="Self.Litterature" Multiplicity="1" />
+          <End Role="LitteratureCopy" Type="Self.LitteratureCopy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Litterature">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LitteratureCopy">
+              <PropertyRef Name="LitteratureID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LitteratureLoan_LitteratureCopy_ID">
+          <End Role="LitteratureCopy" Type="Self.LitteratureCopy" Multiplicity="1" />
+          <End Role="LitteratureLoan" Type="Self.LitteratureLoan" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LitteratureCopy">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LitteratureLoan">
+              <PropertyRef Name="LitteratureCopyID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LittratureCopy_LitteratureCopyStatus_ID">
+          <End Role="LitteratureCopyStatus" Type="Self.LitteratureCopyStatu" Multiplicity="1" />
+          <End Role="LitteratureCopy" Type="Self.LitteratureCopy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LitteratureCopyStatus">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LitteratureCopy">
+              <PropertyRef Name="StatusID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LibaryEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Authors" EntityType="Self.Author" />
+          <EntitySet Name="Customers" EntityType="Self.Customer" />
+          <EntitySet Name="Litteratures" EntityType="Self.Litterature" />
+          <EntitySet Name="LitteratureCopies" EntityType="Self.LitteratureCopy" />
+          <EntitySet Name="LitteratureCopyStatus" EntityType="Self.LitteratureCopyStatu" />
+          <EntitySet Name="LitteratureLoans" EntityType="Self.LitteratureLoan" />
+          <EntitySet Name="vCustomersWithBooks" EntityType="Self.vCustomersWithBook" />
+          <EntitySet Name="vNumberOfCopiesAvailables" EntityType="Self.vNumberOfCopiesAvailable" />
+          <AssociationSet Name="FK_Littrature_Authors_ID" Association="Self.FK_Littrature_Authors_ID">
+            <End Role="Authors" EntitySet="Authors" />
+            <End Role="Litterature" EntitySet="Litteratures" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LitteratureLoan_Custumors_ID" Association="Self.FK_LitteratureLoan_Custumors_ID">
+            <End Role="Customers" EntitySet="Customers" />
+            <End Role="LitteratureLoan" EntitySet="LitteratureLoans" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LittratureCopy_Litterature_ID" Association="Self.FK_LittratureCopy_Litterature_ID">
+            <End Role="Litterature" EntitySet="Litteratures" />
+            <End Role="LitteratureCopy" EntitySet="LitteratureCopies" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LitteratureLoan_LitteratureCopy_ID" Association="Self.FK_LitteratureLoan_LitteratureCopy_ID">
+            <End Role="LitteratureCopy" EntitySet="LitteratureCopies" />
+            <End Role="LitteratureLoan" EntitySet="LitteratureLoans" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LittratureCopy_LitteratureCopyStatus_ID" Association="Self.FK_LittratureCopy_LitteratureCopyStatus_ID">
+            <End Role="LitteratureCopyStatus" EntitySet="LitteratureCopyStatus" />
+            <End Role="LitteratureCopy" EntitySet="LitteratureCopies" />
+          </AssociationSet>
+          <FunctionImport Name="sp_alterdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_creatediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_dropdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(LibaryModel.sp_helpdiagramdefinition_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(LibaryModel.sp_helpdiagrams_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_renamediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="new_diagramname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_upgraddiagrams" />
+          <FunctionImport Name="uspBorrowBook" ReturnType="Collection(String)">
+            <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+            <Parameter Name="BookID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspReturnBook" ReturnType="Collection(String)">
+          <Parameter Name="BookID" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="sp_helpdiagramdefinition_Result">
+          <Property Type="Int32" Name="version" Nullable="true" />
+          <Property Type="Binary" Name="definition" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_helpdiagrams_Result">
+          <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
+          <Property Type="Int32" Name="OwnerID" Nullable="false" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="LibaryModelStoreContainer" CdmEntityContainer="LibaryEntities">
+          <EntitySetMapping Name="Authors">
+            <EntityTypeMapping TypeName="LibaryModel.Author">
+              <MappingFragment StoreEntitySet="Authors">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
+                <ScalarProperty Name="Deceased" ColumnName="Deceased" />
+                <ScalarProperty Name="Nationality" ColumnName="Nationality" />
+                <ScalarProperty Name="Language" ColumnName="Language" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="LibaryModel.Customer">
+              <MappingFragment StoreEntitySet="Customers">
+                <ScalarProperty Name="ActiveCustomer" ColumnName="ActiveCustomer" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
+                <ScalarProperty Name="EntitledForLoan" ColumnName="EntitledForLoan" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Litteratures">
+            <EntityTypeMapping TypeName="LibaryModel.Litterature">
+              <MappingFragment StoreEntitySet="Litterature">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AuthorID" ColumnName="AuthorID" />
+                <ScalarProperty Name="ISBN" ColumnName="ISBN" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Genre" ColumnName="Genre" />
+                <ScalarProperty Name="Language" ColumnName="Language" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LitteratureCopies">
+            <EntityTypeMapping TypeName="LibaryModel.LitteratureCopy">
+              <MappingFragment StoreEntitySet="LitteratureCopy">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="StatusID" ColumnName="StatusID" />
+                <ScalarProperty Name="LitteratureID" ColumnName="LitteratureID" />
+                <ScalarProperty Name="PurchasePrice" ColumnName="PurchasePrice" />
+                <ScalarProperty Name="PurchaseYear" ColumnName="PurchaseYear" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LitteratureCopyStatus">
+            <EntityTypeMapping TypeName="LibaryModel.LitteratureCopyStatu">
+              <MappingFragment StoreEntitySet="LitteratureCopyStatus">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LitteratureLoans">
+            <EntityTypeMapping TypeName="LibaryModel.LitteratureLoan">
+              <MappingFragment StoreEntitySet="LitteratureLoan">
+                <ScalarProperty Name="LoanReturned" ColumnName="LoanReturned" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="LitteratureCopyID" ColumnName="LitteratureCopyID" />
+                <ScalarProperty Name="BorrowDate" ColumnName="BorrowDate" />
+                <ScalarProperty Name="Returndate" ColumnName="Returndate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vCustomersWithBooks">
+            <EntityTypeMapping TypeName="LibaryModel.vCustomersWithBook">
+              <MappingFragment StoreEntitySet="vCustomersWithBooks">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="ReturnDate" ColumnName="ReturnDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vNumberOfCopiesAvailables">
+            <EntityTypeMapping TypeName="LibaryModel.vNumberOfCopiesAvailable">
+              <MappingFragment StoreEntitySet="vNumberOfCopiesAvailable">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BookTitle" ColumnName="BookTitle" />
+                <ScalarProperty Name="ISBN" ColumnName="ISBN" />
+                <ScalarProperty Name="CopyID" ColumnName="CopyID" />
+                <ScalarProperty Name="Availability" ColumnName="Availability" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="uspBorrowBook" FunctionName="LibaryModel.Store.uspBorrowBook" />
+          <FunctionImportMapping FunctionImportName="uspReturnBook" FunctionName="LibaryModel.Store.uspReturnBook" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,64 @@
+﻿@using Libary.Models
+@model Libary.Models.CustomerDetails
+@{
+    ViewBag.Title = "Customer";
+}
+<h2>Customer @Model.CustomerName</h2>
+<div>
+    <h4>Customer Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CustomerName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CustomerName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.EmailAddress)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EmailAddress)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.BirthDate)
+        </dt>
+        <dd>
+            @(Model.BirthDate.HasValue ? Model.BirthDate.Value.ToString("yyyy-MM-dd") : "")
+        </dd>
+        <dd class="row">
+            @Html.DisplayNameFor(model => model.EntitledForLoan) - @Html.DisplayFor(model => model.EntitledForLoan) 
+        </dd>
+        <dd class="row">
+            @Html.DisplayNameFor(model => model.Loans) - @Html.DisplayFor(model => model.Loans)
+        </dd>
+    </dl>
+    @if (Model.EntitledForLoan == true)
+    {
+        @Html.Partial("~/Views/Shared/_BorrowBook.cshtml")
+    }
+</div>
+<div>
+     @Html.Partial("~/Views/Shared/_CustomerLoansView.cshtml")   
+</div>
+    <p>
+        @Html.ActionLink("Back to List", "Index")
+    </p>

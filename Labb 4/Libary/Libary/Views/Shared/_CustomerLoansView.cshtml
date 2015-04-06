@@ -1,0 +1,52 @@
+﻿@using Libary.Models
+@model Libary.Models.CustomerDetails
+
+@if(Model.ActiveLoans.Count > 0)
+{ 
+    <table class="table">
+        <tr>
+            <th>
+                BookTitle
+            </th>
+            <th>
+                ISBN
+            </th>
+            <th>
+                Book Borrowed
+            </th>
+            <th>
+                Book Returned At
+            </th>
+            <th>
+                LoanOverDue
+            </th>
+            <th>
+                 @*Empty to fill out border*@
+            </th>
+        </tr>
+        @foreach (var item in Model.ActiveLoans)
+        {                
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LitteratureTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ISBN)
+                </td>
+                <td>
+                    @(item.BorrowDate.HasValue ? item.BorrowDate.Value.ToString("yyyy-MM-dd") : "")
+                </td>
+                <td>
+                    @(item.ReturnDate.HasValue ? item.ReturnDate.Value.ToString("yyyy-MM-dd") : "")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoansOverDue)
+                </td>
+                <td>
+                    @Html.ActionLink(" ", "ReturnBook", new { id = item.LitteratureCopyID, cid = Model.CustomerID }, new { @class = "btn btn-danger btn-sm glyphicon glyphicon-remove" })
+                </td>
+            </tr>
+        }
+    </table>
+}
+

@@ -1,0 +1,62 @@
+﻿@model Libary.Models.CustomerSummary
+
+@{
+    ViewBag.Title = "DeleteCustomer";
+}
+
+<h2>DeleteCustomer</h2>
+
+<h3>Are you sure you want to delete @Model.CustomerName</h3>
+<div>
+    <h4>CustomerSummary</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CustomerName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CustomerName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EmailAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EmailAddress)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ActiveLoans)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActiveLoans)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger" disabled="@Model.ActiveLoans" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>
